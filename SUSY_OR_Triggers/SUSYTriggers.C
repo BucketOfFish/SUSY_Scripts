@@ -9,7 +9,10 @@ void SUSYTriggers() {
     string data_filename = ntuple_path + "data15-16_merged_processed.root";
     TChain* tch_data = new TChain("data"); tch_data->Add(data_filename.c_str());
 
-    //--- make RunNumber histograms
+    //-----------------------------
+    // RunNumber histograms
+    //-----------------------------
+
     TH1F *h_ee_pass_1L2L, *h_mm_pass_1L2L, *h_em_pass_1L2L, *h_ee_pass_1L2LOR, *h_mm_pass_1L2LOR, *h_em_pass_1L2LOR;
     int n_bins = 100;
     int low_run_number = 275000;
@@ -48,7 +51,7 @@ void SUSYTriggers() {
     leg->SetFillColor(0);
     leg->Draw();
 
-    can->Print("ee.pdf");
+    can->Print("RunNumber_ee.pdf");
 
     //--- mm
     can = new TCanvas("can","can",600,600);
@@ -70,7 +73,7 @@ void SUSYTriggers() {
     leg->SetFillColor(0);
     leg->Draw();
 
-    can->Print("mm.pdf");
+    can->Print("RunNumber_mm.pdf");
 
     //--- em
     can = new TCanvas("can","can",600,600);
@@ -92,5 +95,45 @@ void SUSYTriggers() {
     leg->SetFillColor(0);
     leg->Draw();
 
-    can->Print("em.pdf");
+    can->Print("RunNumber_em.pdf");
+
+    //-----------------------------
+    // RunNumber vs. pT scatter
+    //-----------------------------
+
+    //--- ee
+    can = new TCanvas("can","can",600,600);
+    can->cd();
+
+    tch_data->SetMarkerStyle(3);
+    tch_data->SetMarkerColor(3);
+    tch_data->Draw("RunNumber:lepPt[0]", "trigMatch_1L2LTrigOR && !trigMatch_1L2LTrig && lepFlavor[0]==1 && lepFlavor[1]==1");
+    tch_data->SetMarkerColor(4);
+    tch_data->Draw("RunNumber:lepPt[1]", "trigMatch_1L2LTrigOR && !trigMatch_1L2LTrig && lepFlavor[0]==1 && lepFlavor[1]==1", "same");
+
+    can->Print("scatter_ee.pdf");
+
+    //--- mm
+    can = new TCanvas("can","can",600,600);
+    can->cd();
+
+    tch_data->SetMarkerStyle(3);
+    tch_data->SetMarkerColor(3);
+    tch_data->Draw("RunNumber:lepPt[0]", "trigMatch_1L2LTrigOR && !trigMatch_1L2LTrig && lepFlavor[0]==2 && lepFlavor[1]==2");
+    tch_data->SetMarkerColor(4);
+    tch_data->Draw("RunNumber:lepPt[1]", "trigMatch_1L2LTrigOR && !trigMatch_1L2LTrig && lepFlavor[0]==2 && lepFlavor[1]==2", "same");
+
+    can->Print("scatter_mm.pdf");
+
+    //--- em
+    can = new TCanvas("can","can",600,600);
+    can->cd();
+
+    tch_data->SetMarkerStyle(3);
+    tch_data->SetMarkerColor(3);
+    tch_data->Draw("RunNumber:lepPt[0]", "trigMatch_1L2LTrigOR && !trigMatch_1L2LTrig && ((lepFlavor[0]==1 && lepFlavor[1]==2) || (lepFlavor[0]==2 && lepFlavor[1]==1))");
+    tch_data->SetMarkerColor(4);
+    tch_data->Draw("RunNumber:lepPt[1]", "trigMatch_1L2LTrigOR && !trigMatch_1L2LTrig && ((lepFlavor[0]==1 && lepFlavor[1]==1) || (lepFlavor[0]==2 && lepFlavor[1]==1))", "same");
+
+    can->Print("scatter_em.pdf");
 }
