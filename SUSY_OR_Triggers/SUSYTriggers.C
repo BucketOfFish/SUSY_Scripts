@@ -109,6 +109,8 @@ void SUSYTriggers() {
     tch_data->SetMarkerColor(3);
     tch_data->Draw("RunNumber:lepPt[0]", "trigMatch_1L2LTrigOR && !trigMatch_1L2LTrig && lepFlavor[0]==1 && lepFlavor[1]==1");
     tch_data->SetMarkerColor(4);
+    tch_data->GetHistogram()->SetTitle("ee");
+    tch_data->GetHistogram()->GetXaxis()->SetTitle("");
     tch_data->Draw("RunNumber:lepPt[1]", "trigMatch_1L2LTrigOR && !trigMatch_1L2LTrig && lepFlavor[0]==1 && lepFlavor[1]==1", "same");
 
     can->Print("scatter_ee.png");
@@ -121,6 +123,8 @@ void SUSYTriggers() {
     tch_data->SetMarkerColor(3);
     tch_data->Draw("RunNumber:lepPt[0]", "trigMatch_1L2LTrigOR && !trigMatch_1L2LTrig && lepFlavor[0]==2 && lepFlavor[1]==2");
     tch_data->SetMarkerColor(4);
+    tch_data->GetHistogram()->SetTitle("mm");
+    tch_data->GetHistogram()->GetXaxis()->SetTitle("");
     tch_data->Draw("RunNumber:lepPt[1]", "trigMatch_1L2LTrigOR && !trigMatch_1L2LTrig && lepFlavor[0]==2 && lepFlavor[1]==2", "same");
 
     can->Print("scatter_mm.png");
@@ -133,6 +137,8 @@ void SUSYTriggers() {
     tch_data->SetMarkerColor(3);
     tch_data->Draw("RunNumber:lepPt[0]", "trigMatch_1L2LTrigOR && !trigMatch_1L2LTrig && ((lepFlavor[0]==1 && lepFlavor[1]==2) || (lepFlavor[0]==2 && lepFlavor[1]==1))");
     tch_data->SetMarkerColor(4);
+    tch_data->GetHistogram()->SetTitle("em");
+    tch_data->GetHistogram()->GetXaxis()->SetTitle("");
     tch_data->Draw("RunNumber:lepPt[1]", "trigMatch_1L2LTrigOR && !trigMatch_1L2LTrig && ((lepFlavor[0]==1 && lepFlavor[1]==1) || (lepFlavor[0]==2 && lepFlavor[1]==1))", "same");
 
     can->Print("scatter_em.png");
