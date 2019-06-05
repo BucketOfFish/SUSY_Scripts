@@ -1,4 +1,5 @@
 #include "../CommonLibraries.C"
+#include <boost/algorithm/string/replace.hpp>
 
 using namespace std;
 
@@ -9,6 +10,14 @@ void SUSYTriggers_Table() {
     vector<string> triggers {"trigMatch_1L2LTrig", "trigMatch_1L2LTrigOR", "trigMatch_2LTrigOR"};
     vector<string> flavors {"lepFlavor[0]==1 && lepFlavor[1]==1", "lepFlavor[0]==2 && lepFlavor[1]==2", "((lepFlavor[0]==2 && lepFlavor[1]==1) || (lepFlavor[0]==1 && lepFlavor[1]==2))"};
     vector<vector<float>> yields;
+
+    //--- make LaTeX table
+    ofstream fout("Table/table.tex", ios::out);
+    fout << "\\documentclass{article}" << endl;
+    fout << "\\usepackage[utf8]{inputenc}" << endl;
+    fout << "\\begin{document}" << endl;
+    fout << "\\thispagestyle{empty}" << endl;
+    fout << endl;
 
     for (string trigger : triggers) {
         for (string file_name : file_names) {
@@ -32,17 +41,25 @@ void SUSYTriggers_Table() {
             delete tch;
         }
 
-        //--- make LaTeX table
-        ofstream fout("Tables/table_" + trigger + ".txt", ios::out);
+        //--- fill table
         fout << "\\begin{table}[]" << endl;
-        fout << "\\begin{tabular}{@{}|l|l|l|l|@{}}" << endl;
-        fout << "\\toprule" << endl;
-        fout << "                  & ee & mm & em \\\\ \\midrule" << endl;
+        fout << "\\begin{center}" << endl;
+        boost::replace_all(trigger, "_", "\\_");
+        fout << trigger << " Counts" << endl;
+        fout << "\\begin{tabular}{l|l|l|l}" << endl;
+        fout << "& ee & mm & em \\\\" << endl;
+        fout << "\\hline" << endl;
         for (int i=0; i<file_names.size(); i++) {
-            fout << file_labels[i] << " & " << yields[i][0] << " & " << yields[i][1] << " & " << yields[i][2] << " \\\\ \\midrule" << endl;
-            //fout << "(200, 100) MC16e  & " << yields[0][0] << " & " << yields[0][0] << " & " << yields[0][0] << " \\\\ \\bottomrule" << endl;
+            fout << file_labels[i] << " & " << yields[i][0] << " & " << yields[i][1] << " & " << yields[i][2] << " \\\\" << endl;
         }
         fout << "\\end{tabular}" << endl;
+        fout << "\\end{center}" << endl;
         fout << "\\end{table}" << endl;
+        fout << endl;
     }
+
+    //--- finish generating LaTeX
+    fout << "\\end{document}" << endl;
+    system("latex Table/table.tex");
+    system("dvipdf Table/table.dvi");
 }
