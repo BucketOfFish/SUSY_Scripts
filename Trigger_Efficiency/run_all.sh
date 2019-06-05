@@ -1,4 +1,5 @@
-for feature in "mll" "lepPt[0]" "lepPt[1]" "Ptll" "met_Et" "Ht30"
+#for feature in "Ptll" "met_Et" "Ht30" "nJet30"
+for feature in "mll" "lepPt[0]" "lepPt[1]"
 do
     for period in "SUSY2_Signal_mc16a" "SUSY2_Signal_mc16cd" "SUSY2_Signal_mc16e"
     do

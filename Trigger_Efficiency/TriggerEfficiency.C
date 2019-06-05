@@ -19,11 +19,27 @@ void TriggerEfficiency(string folder_name, string file_name, string feature) {
     else tch = new TChain((file_name + "_NoSys").c_str());
     tch->Add(full_filename.c_str());
 
+    //--- settings based on feature
+    std::tuple<string, int, float, float> plot_settings;
+
+    if (feature == "met_Et") plot_settings = std::make_tuple("E_{T}^{miss} [GeV]", 20, 0, 1000);
+    else if (feature == "Ptll") plot_settings = std::make_tuple("p_{T} [GeV]", 20, 0, 500);
+    else if (feature == "nJet30") plot_settings = std::make_tuple("n_{jets}", 10, 2, 12);
+    else if (feature == "Ht30") plot_settings = std::make_tuple("H_{T}", 20, 0, 2000);
+    else if (feature == "mll") plot_settings = std::make_tuple("m_{ll} [GeV]", 30, 0, 500);
+    else if (feature == "lepPt[0]") plot_settings = std::make_tuple("1^{st} lepton p_{T} [GeV]", 20, 0, 500);
+    else if (feature == "lepPt[1]") plot_settings = std::make_tuple("2^{nd} lepton p_{T} [GeV]", 20, 0, 300);
+
+    string xtitle = std::get<0>(plot_settings);
+    int nbins = std::get<1>(plot_settings);
+    float xmin = std::get<2>(plot_settings);
+    float xmax = std::get<3>(plot_settings);
+
     //--- draw trigger histograms
     TH1F *h_offline, *h_test_trigger_1, *h_test_trigger_2;
-    h_offline = new TH1F("h_offline", "", 20, 0, 200);
-    h_test_trigger_1 = new TH1F("h_test_trigger_1", "", 20, 0, 200);
-    h_test_trigger_2 = new TH1F("h_test_trigger_2", "", 20, 0, 200);
+    h_offline = new TH1F("h_offline", "", nbins, xmin, xmax);
+    h_test_trigger_1 = new TH1F("h_test_trigger_1", "", nbins, xmin, xmax);
+    h_test_trigger_2 = new TH1F("h_test_trigger_2", "", nbins, xmin, xmax);
     tch->Draw((feature + ">>h_offline").c_str(), offline_trigger, "goff");
     tch->Draw((feature + ">>h_test_trigger_1").c_str(), test_trigger_1, "goff");
     tch->Draw((feature + ">>h_test_trigger_2").c_str(), test_trigger_2, "goff");
@@ -44,10 +60,11 @@ void TriggerEfficiency(string folder_name, string file_name, string feature) {
     mainpad->cd();
 
     h_efficiency_1->SetStats(0);
-    h_efficiency_1->SetTitle("Trigger Efficiency");
+    //h_efficiency_1->SetTitle("Trigger Efficiency");
+    h_efficiency_1->SetTitle((folder_name + ", " + file_name).c_str());
     h_efficiency_1->SetMinimum(0.0);
     h_efficiency_1->SetMaximum(1.0);
-    h_efficiency_1->GetXaxis()->SetTitle("m_{ll} [GeV]");
+    h_efficiency_1->GetXaxis()->SetTitle(xtitle.c_str());
     h_efficiency_1->GetYaxis()->SetTitle("efficiency");
 
     h_efficiency_1->Draw("hist");
@@ -79,9 +96,9 @@ void TriggerEfficiency(string folder_name, string file_name, string feature) {
     h_ratio_2_1->GetYaxis()->SetTitleSize(0.15);
     h_ratio_2_1->GetYaxis()->SetTitleOffset(0.3);
     h_ratio_2_1->GetYaxis()->SetLabelSize(0.15);
-    h_ratio_2_1->SetMinimum(0.0);
-    h_ratio_2_1->SetMaximum(2.0);
-    h_ratio_2_1->GetYaxis()->SetRangeUser(0.0,2.0);
+    h_ratio_2_1->SetMinimum(0.5);
+    h_ratio_2_1->SetMaximum(1.5);
+    h_ratio_2_1->GetYaxis()->SetRangeUser(0.5,1.5);
 
     h_ratio_2_1->SetStats(0); h_ratio_2_1->SetLineColor(2); h_ratio_2_1->SetLineWidth(2); h_ratio_2_1->SetMarkerStyle(20);
     h_ratio_2_1->Draw("hist");
