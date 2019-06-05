@@ -2,11 +2,11 @@
 
 using namespace std;
 
-void SUSYTriggers() {
+void SUSYTriggers(string period) {
 
     //--- load files
     string ntuple_path = "/eos/atlas/atlascerngroupdisk/phys-susy/2L2J-ANA-SUSY-2018-05/SusySkim2LJets/v1.6/SUSY2/SUSY2_Data/";
-    string data_filename = ntuple_path + "data15-16_merged_processed.root";
+    string data_filename = ntuple_path + period + "_merged_processed.root";
     TChain* tch_data = new TChain("data"); tch_data->Add(data_filename.c_str());
 
     //-----------------------------
