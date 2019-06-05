@@ -2,7 +2,7 @@
 
 using namespace std;
 
-void TriggerEfficiency(string file_name) {
+void TriggerEfficiency(string folder_name, string file_name, string feature) {
 
     //--- set triggers
     TCut offline_trigger("nLep_signal==2 && nJet30>=2 && met_Et>200");
@@ -12,18 +12,21 @@ void TriggerEfficiency(string file_name) {
     TCut test_trigger_2 = offline_trigger && online_trigger_1L2L;
 
     //--- load files
-    string ntuple_path = "/eos/atlas/atlascerngroupdisk/phys-susy/2L2J-ANA-SUSY-2018-05/SusySkim2LJets/v1.6/SUSY2/SUSY2_Signal_mc16a/";
-    string sig_filename = ntuple_path + file_name + "_merged_processed.root";
-    TChain* tch_sig = new TChain((file_name + "_NoSys").c_str()); tch_sig->Add(sig_filename.c_str());
+    string base_path = "/eos/atlas/atlascerngroupdisk/phys-susy/2L2J-ANA-SUSY-2018-05/SusySkim2LJets/v1.6/SUSY2/";
+    string full_filename = base_path + "/" + folder_name + "/" + file_name + "_merged_processed.root";
+    TChain* tch;
+    if (file_name.find("data") != string::npos) tch = new TChain("data");
+    else tch = new TChain((file_name + "_NoSys").c_str());
+    tch->Add(full_filename.c_str());
 
     //--- draw trigger histograms
     TH1F *h_offline, *h_test_trigger_1, *h_test_trigger_2;
-    h_offline = new TH1F("h_offline", "", 10, 0, 200);
-    h_test_trigger_1 = new TH1F("h_test_trigger_1", "", 10, 0, 200);
-    h_test_trigger_2 = new TH1F("h_test_trigger_2", "", 10, 0, 200);
-    tch_sig->Draw("mll>>h_offline", offline_trigger, "goff");
-    tch_sig->Draw("mll>>h_test_trigger_1", test_trigger_1, "goff");
-    tch_sig->Draw("mll>>h_test_trigger_2", test_trigger_2, "goff");
+    h_offline = new TH1F("h_offline", "", 20, 0, 200);
+    h_test_trigger_1 = new TH1F("h_test_trigger_1", "", 20, 0, 200);
+    h_test_trigger_2 = new TH1F("h_test_trigger_2", "", 20, 0, 200);
+    tch->Draw((feature + ">>h_offline").c_str(), offline_trigger, "goff");
+    tch->Draw((feature + ">>h_test_trigger_1").c_str(), test_trigger_1, "goff");
+    tch->Draw((feature + ">>h_test_trigger_2").c_str(), test_trigger_2, "goff");
 
     //--- divide to get efficiency histograms
     TH1F* h_efficiency_1 = (TH1F*) h_test_trigger_1->Clone("h_efficiency_1");
@@ -84,5 +87,5 @@ void TriggerEfficiency(string file_name) {
     h_ratio_2_1->Draw("hist");
 
     //--- save plot
-    can->Print(("triggerEfficiency_" + file_name + ".pdf").c_str());
+    can->Print(("Plots/triggerEfficiency_" + folder_name + "_" + file_name + "_" + feature + ".png").c_str());
 }
